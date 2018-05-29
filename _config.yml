@@ -12,9 +12,9 @@ baseurl: "/luoyifu.github.io"         # for example, '/blog' if your blog hosted
 
 # SNS settings
 RSS: false
-weibo_username:     LZ_L7
-zhihu_username:     荔枝
-github_username:    luoyifu
+weibo_username:     luoyifu1989@gmail.com
+zhihu_username:     luoyifu2013@163.com
+github_username:    luoyifu2013@163.com
 #twitter_username:  huxpro
 #facebook_username:  huxpro
 
