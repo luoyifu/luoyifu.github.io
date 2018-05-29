@@ -1,6 +1,6 @@
 # Site settings
 title: 去取辩中
-SEOTitle: 人工智能医疗大数据
+SEOTitle: 去辩取中
 header-img: img/home-bg.jpg
 email: luoyifu2013@163.com
 description: "你相信什么，你就是什么"
@@ -13,8 +13,8 @@ baseurl: "/luoyifu.github.io"         # for example, '/blog' if your blog hosted
 # SNS settings
 RSS: false
 weibo_username:     luoyifu1989@gmail.com
-zhihu_username:     luoyifu2013@163.com
-github_username:    luoyifu2013@163.com
+zhihu_username:     li-zhi-89-54
+github_username:    luoyifu
 #twitter_username:  huxpro
 #facebook_username:  huxpro
 
