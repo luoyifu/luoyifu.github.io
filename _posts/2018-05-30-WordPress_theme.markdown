@@ -1,3 +1,4 @@
+---
 layout:     post
 title:      "WordPress主题自定义修改（1）"
 subtitle:   "如何修改WordPress主题"
@@ -9,12 +10,12 @@ tags:
     - 生活
     - WordPress
     - 网站
-
+---
 # WordPress主题自定义修改（1）
 
 WordPress主题是强大的，但面对各种各样的需求，我们仍然需要对其进行一些微调。如果是布局和设计上不满意，那么换个主题无疑是更快捷的选择。在做网站的第一周，我曾经尝试自己修改自带主题Busiprof，主题内各个文件的功能，相互之间的链接都莫名其妙。作为一个初学者，这条路似乎走不通。
 这篇文章我先介绍WordPress主题的各个文件及基础知识，了解了这些才能在后续对主题进行自定义修改。
----
+
 Content:
 * 主题文件夹中各个文件功能介绍
 * 文件执行顺序
@@ -24,9 +25,9 @@ Content:
 ---
 ## 1. WordPress主题中的各个文件
 主题存储在wp-content/themes文件夹中。
-![themedoc](/img/in-post/themedoc1.jpg)
+![themedoc](/img/in-post/themedoc1.JPG)
 打开一个主题，以busiprof为例，可以看到许多文件：
-![themedoc2](/img/in-post/themedoc2.jpg)
+![themedoc2](/img/in-post/themedoc2.JPG)
 
 这些文件大致内容为：
     css（文件夹）：存放 css 文件
@@ -61,18 +62,15 @@ Content:
     如果 home.php 和 index.php 都找不到，你的主题将不会被 WordPress 识别。
 
 主页
-
     home.php
     index.php
 
 文章页：
-
     single-{post_type}.php – 如果文章类型是videos（即视频），WordPress就会去查找single-videos.php（WordPress 3.0及以上版本支持）
     single.php
     index.php
 
 页面
-
     自定义模板 – 在WordPress后台创建页面的地方，右侧边栏可以选择页面的自定义模板
     page-{slug}.php – 如果页面的缩略名是news，WordPress将会查找 page-news.php（WordPress 2.9及以上版本支持）
     page-{id}.php – 如果页面ID是6，WordPress将会查找page-6.php
@@ -80,7 +78,6 @@ Content:
     index.php
 
 分类
-
     category-{slug}.php – 如果分类的缩略名为news，WordPress将会查找category-news.php(WordPress 2.9及以上版本支持)
     category-{id}.php -如果分类ID为6，WordPress将会查找category-6.php
     category.php
@@ -88,7 +85,6 @@ Content:
     index.php
 
 标签
-
     tag-{slug}.php – 如果标签缩略名为sometag，WordPress将会查找tag-sometag.php
     tag-{id}.php – 如果标签ID为6，WordPress将会查找tag-6.php（WordPress 2.9及以上版本支持）
     tag.php
@@ -96,7 +92,6 @@ Content:
     index.php
 
 作者
-
     author-{nicename}.php – 如果作者的昵称为rami，WordPress将会查找author-rami.php（WordPress 3.0及以上版本支持）
     author-{id}.php – 如果作者ID为6，WordPress将会查找author-6.php（WordPress 3.0及以上版本支持）
     author.php
@@ -104,23 +99,19 @@ Content:
     index.php
 
 日期页面
-
     date.php
     archive.php
     index.php
 
 搜索结果
-
     search.php
     index.php
 
 404 (未找到)页面
-
     404.php
     index.php
 
 附件页面
-
     MIME_type.php – 可以是任何MIME类型 (image.php, video.php, audio.php, application.php 或者其他).
     attachment.php
     single.php
@@ -128,7 +119,7 @@ Content:
 
 ## 3. Post和Page
 页面中，有一点要格外注意。WordPress的逻辑将页面分为两类，Post和Page。这在仪表盘中也可以体现：
-![yibiaopan](/img/in-post/yibiaopan.jpg)
+![yibiaopan](/img/in-post/yibiaopan.JPG)
 
 * 文章（post）：博客最基本的组成，默认情况下就是博客首页按照倒序显示的文章。必须属于某个分类（category），逻辑上属于 WordPress 的循环函数之内，可用查询函数（query_posts 等）按照指定条件从数据库中取出你想要的文章，然后利用循环函数显示在首页。
 
@@ -140,9 +131,9 @@ Content:
 
 ## 4. 创建几个菜单很有必要
 创建菜单需要点击外观->菜单，然后就看到如下页面：
-![caidan](/img/in-post/caidan.jpg)
+![caidan](/img/in-post/caidan.JPG)
 在顶端可以选择一个菜单进行编辑或者创建新的菜单。菜单可以是页面、分类目录、文章。菜单中可以设置子项目，在网站中显示下拉菜单的效果。
-![caidan2](/img/in-post/caidan2.jpg)
+![caidan2](/img/in-post/caidan2.JPG)
 
 > **需要多思考一下的问题**：WordPress中发表的文章是按时间顺序显示的，但我们看到网站很多需要分为不同栏目，我们希望不同栏目可以单独在菜单中找到。这样，“分类目录”添加进菜单就可以解决。一个菜单中可以既有分类目录，又有页面，还有文章。
 
