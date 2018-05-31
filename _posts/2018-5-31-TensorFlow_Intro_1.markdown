@@ -32,14 +32,16 @@ ouput = tf.multiply(input1, input2)
 
 eg2:
 x = tf.placeholder("float", [None, 784])
-# x不是一个特定的值，而是一个占位符placeholder，我们在TensorFlow运行计算时输入这个值。我们希望能够输入任意数量的MNIST图像，每一张图展平成784维的向量。我们用2维的浮点数张量来表示这些图，这个张量的形状是[None，784 ]。（这里的None表示此张量的第一个维度可以是任何长度的。）
+# x不是一个特定的值，而是一个占位符placeholder，我们在TensorFlow运行计算时输入这个值。
+# 我们希望能够输入任意数量的MNIST图像，每一张图展平成784维的向量。
+# 我们用2维的浮点数张量来表示这些图，这个张量的形状是[None，784 ]。（这里的None表示此张量的第一个维度可以是任何长度的。）
 ```
 
 接下来, 传值的工作交给了`sess.run()`, 需要传入的值放在了`feed_dict={}`并一一对应每一个`input. placeholder`与`feed_dict={}`是绑定在一起出现的。
 
 ## Variable
 一个Variable代表一个可修改的张量，存在在TensorFlow的用于描述交互性操作的图中。它们可以用于计算输入值，也可以在计算中被修改。对于各种机器学习应用，一般都会有模型参数，可以用Variable表示。
-eg:
+<br>eg:
 ```
 W = tf.Variable(tf.zeros([784,10]))
 b = tf.Variable(tf.zeros([10]))
@@ -66,3 +68,30 @@ update = tf.assign(state, new_value)
 
 ## Session会话控制
 Session 是 Tensorflow 为了控制,和输出文件的执行的语句. 运行`session.run()`可以获得你要得知的运算结果, 或者是你所要运算的部分.
+
+加载 Tensorflow ，然后建立两个`matrix`,输出两个`matrix`矩阵相乘的结果。
+```
+import tensorflow as tf
+
+# create two matrixes
+
+matrix1 = tf.constant([[3,3]])
+matrix2 = tf.constant([[2],
+                       [2]])
+product = tf.matmul(matrix1,matrix2) # matmul是矩阵惩罚
+```
+因为`product`不是直接计算的步骤, 所以我们会要使用`Session`来激活`product`并得到计算结果. 有两种形式使用会话控制`Session`。
+```
+# method 1
+sess = tf.Session()
+result = sess.run(product)
+print(result)
+sess.close()
+# [[12]]
+
+# method 2
+with tf.Session() as sess:
+    result2 = sess.run(product)
+    print(result2)
+# [[12]]
+```
