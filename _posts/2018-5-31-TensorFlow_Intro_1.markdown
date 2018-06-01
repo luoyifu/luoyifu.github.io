@@ -136,6 +136,7 @@ init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
 ```
+
 2. 初始化一部分变量
 ```
 # 初始化a,b
