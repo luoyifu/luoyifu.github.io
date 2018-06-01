@@ -62,15 +62,18 @@ Content:
     如果 home.php 和 index.php 都找不到，你的主题将不会被 WordPress 识别。
 
 主页
+
     home.php
     index.php
 
-文章页：
+文章页
+
     single-{post_type}.php – 如果文章类型是videos（即视频），WordPress就会去查找single-videos.php（WordPress 3.0及以上版本支持）
     single.php
     index.php
 
 页面
+
     自定义模板 – 在WordPress后台创建页面的地方，右侧边栏可以选择页面的自定义模板
     page-{slug}.php – 如果页面的缩略名是news，WordPress将会查找 page-news.php（WordPress 2.9及以上版本支持）
     page-{id}.php – 如果页面ID是6，WordPress将会查找page-6.php
@@ -78,6 +81,7 @@ Content:
     index.php
 
 分类
+
     category-{slug}.php – 如果分类的缩略名为news，WordPress将会查找category-news.php(WordPress 2.9及以上版本支持)
     category-{id}.php -如果分类ID为6，WordPress将会查找category-6.php
     category.php
@@ -85,6 +89,7 @@ Content:
     index.php
 
 标签
+
     tag-{slug}.php – 如果标签缩略名为sometag，WordPress将会查找tag-sometag.php
     tag-{id}.php – 如果标签ID为6，WordPress将会查找tag-6.php（WordPress 2.9及以上版本支持）
     tag.php
@@ -92,6 +97,7 @@ Content:
     index.php
 
 作者
+
     author-{nicename}.php – 如果作者的昵称为rami，WordPress将会查找author-rami.php（WordPress 3.0及以上版本支持）
     author-{id}.php – 如果作者ID为6，WordPress将会查找author-6.php（WordPress 3.0及以上版本支持）
     author.php
@@ -99,19 +105,23 @@ Content:
     index.php
 
 日期页面
+
     date.php
     archive.php
     index.php
 
 搜索结果
+
     search.php
     index.php
 
 404 (未找到)页面
+
     404.php
     index.php
 
 附件页面
+
     MIME_type.php – 可以是任何MIME类型 (image.php, video.php, audio.php, application.php 或者其他).
     attachment.php
     single.php
@@ -147,7 +157,11 @@ Content:
 
 ## 可以继续阅读一些参考资料
 以上内容参考了许多，感谢:
+
 [WordPress主题文件结构及执行](https://blog.csdn.net/liuxuekai/article/details/52371894)
+
 [WordPress主题制作全过程教程](https://www.ludou.org/create-wordpress-themes-prepare.html)
+
 [磊子的博客](http://www.favortt.com/)
+
 [露兜博客](https://www.ludou.org/)
