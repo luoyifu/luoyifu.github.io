@@ -130,14 +130,15 @@ with tf.Session() as sess:
 ```
 
 初始化有两种方法：
-1. 一次性初始化所有变量
+1. 一次性初始化所有变量：
 ```
 init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
 ```
 
-2. 初始化一部分变量
+2. 初始化一部分变量：
+
 ```
 # 初始化a,b
 init_ab = tf.variable_initializer([a, b], name='init_ab')
@@ -149,6 +150,7 @@ w = tf.Variable(tf.zeros([784, 10]))
 with tf.Session() as sess:
     sess.run(w.initializer)
 ```
+
 
 **既然有全局初始化操作，为什么还要初始化某个变量呢？**因为，有时候需要要用另一个变量的初始化值给当前变量初始化。由于`tf.initialize_all_variables()`是并行地初始化所有变量，所以在有这种需求的情况下需要小心。
 用其它变量的值初始化一个新的变量时，使用其它变量的`initialized_value()`属性。你可以直接把已初始化的值作为新变量的初始值，或者把它当做tensor计算得到一个值赋予新变量。
@@ -185,6 +187,7 @@ with tf.Session() as sess:
   print "Model saved in file: ", save_path
 ```
 用同一个`Saver`对象来恢复变量。注意，当你从文件中恢复变量时，不需要事先对它们做初始化。
+
 ```
 # 创建变量
 v1 = tf.Variable(..., name="v1")
@@ -242,6 +245,7 @@ x = tf.placeholder("float", [None, 784])
 # 我们希望能够输入任意数量的MNIST图像，每一张图展平成784维的向量。
 # 我们用2维的浮点数张量来表示这些图，这个张量的形状是[None，784 ]。（这里的None表示此张量的第一个维度可以是任何长度的。）
 ```
+
 **需要注意的是：**dtype是必须要指定的参数，shape如果是None，说明任何大小的tensor都能够接受，使用shape=None很容易定义好图，但是在debug的时候这将成为噩梦，所以最好是指定好shape。
 
 接下来, 传值的工作交给了`sess.run()`, 需要传入的值放在了`feed_dict={}`并一一对应每一个`input. placeholder`与`feed_dict={}`是绑定在一起出现的。
@@ -286,6 +290,7 @@ matrix2 = tf.constant([[2],
                        [2]])
 product = tf.matmul(matrix1,matrix2) # matmul是矩阵惩罚
 ```
+
 因为`product`不是直接计算的步骤, 所以我们会要使用`Session`来激活`product`并得到计算结果. 有两种形式使用会话控制`Session`。
 ```
 # method 1
