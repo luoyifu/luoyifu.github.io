@@ -9,6 +9,9 @@ tags:
     - deeplearning
 ---
 
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+
 # 深度学习基础知识
 
 ## 符号计算
