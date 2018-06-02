@@ -158,9 +158,9 @@ with tf.Session() as sess:
 ```
 # 创建一个变量
 weights = tf.Variable(tf.random_normal([784, 200], stddev=0.35),name="weights")
-# 创建另一个变量，和 'weights'有相同值
+# 创建另一个变量，和weights有相同值
 w2 = tf.Variable(weights.initialized_value(), name="w2")
-# 创建另一个变量，值是'weights'的2倍
+# 创建另一个变量，值是weights的2倍
 w_twice = tf.Variable(weights.initialized_value() * 0.2, name="w_twice")
 ```
 
