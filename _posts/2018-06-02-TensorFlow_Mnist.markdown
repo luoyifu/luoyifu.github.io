@@ -61,6 +61,7 @@ init = tf.initialize_all_variables()
 sess = tf.Session()
 sess.run(init)
 
+# 这里我们让模型循环训练1000次
 for i in range(1000):
   batch_xs, batch_ys = mnist.train.next_batch(100)
   sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
