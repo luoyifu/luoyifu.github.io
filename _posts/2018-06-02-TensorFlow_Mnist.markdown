@@ -12,6 +12,8 @@ tags:
 
 # TensorFlow Mnist
 
+
+## 1. 数据下载和导入
 导入数据（连接不上google非常麻烦）
 ```
 mnist = input_data.read_data_sets('data/', one_hot=True)
@@ -24,6 +26,7 @@ from tensorflow.contrib.learn.python.learn.datasets.mnist import read_data_sets
 ```
 这个函数可以顺着路径找到，更改其中的`DEFAULT_SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'`（官方的default source url还是连接不上）
 
+## 2. 构建图
 
 首先定义数据结构：
 输入数据暂时不知道是什么，我们用占位符placeholder，权重w和偏置量b都是需要拟合的，用变量varialbe来定义：
@@ -53,6 +56,7 @@ cross_entropy = -tf.reduce_sum(y_*tf.log(y))
 # 用梯度下降算法（gradient descent algorithm）以0.01的学习速率最小化交叉熵
 train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
 ```
+## 3. 部署模型并训练
 
 至此，模型已经设计完毕。下面，初始化并部署模型：
 ```
@@ -66,6 +70,7 @@ for i in range(1000):
   batch_xs, batch_ys = mnist.train.next_batch(100)
   sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 ```
+## 4. 模型评估
 
 模型评估：
 如何评估模型？首先要找到预测正确的那些图片
