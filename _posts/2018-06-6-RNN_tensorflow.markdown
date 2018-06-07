@@ -49,6 +49,9 @@ CNN 是通过局部连接和权值共享来做到相邻区域的特征提取的�
 ![朴素 RNN 的结构](/img/in-post/rnn2.jpg)
 其中，x_{t-1},x_t,x_{t+1}、o_{t-1},o_t,o_{t+1}、s_{t-1},s_t,s_{t+1}可以分别视为第t-1,t,t+1“时刻”的输入、输出与 State。不难看出对于每一个时刻而言，朴素的 RNN 都可视为一个普通的神经网络：
 
+## LSTM
+
 
 参考资料
 [RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
+[RNN](https://www.jianshu.com/p/9dc9f41f0b29)
