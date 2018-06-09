@@ -27,7 +27,11 @@ tags:
 ## 所需环境和工具
 你需要一个FireFox浏览器
 
-## 
+## 对网站进行微调
+
+
+## 擅用插件
 
 参考
 [知乎：大牛是如何开发WordPress主题的](https://www.zhihu.com/question/21804163)
+[学做网站](http://www.xuewangzhan.net/wpmoban/8125.html)
