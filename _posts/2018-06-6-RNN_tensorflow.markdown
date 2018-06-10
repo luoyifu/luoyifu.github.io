@@ -49,8 +49,26 @@ CNN 是通过局部连接和权值共享来做到相邻区域的特征提取的�
 ![朴素 RNN 的结构](/img/in-post/rnn2.jpg)
 其中，x_{t-1},x_t,x_{t+1}、o_{t-1},o_t,o_{t+1}、s_{t-1},s_t,s_{t+1}可以分别视为第t-1,t,t+1“时刻”的输入、输出与 State。不难看出对于每一个时刻而言，朴素的 RNN 都可视为一个普通的神经网络：
 
-## LSTM
+## 循环神经网络（RNN）与递归神经网络（RNN）
+RNN（Recurrent neural network，循环神经网络)是一系列能够处理序列数据的神经网络的总称。这里要注意循环神经网络和递归神经网络（Recursive neural network）的区别。
 
+* recurrent: 时间维度的展开，代表信息在时间维度从前往后的的传递和积累，可以类比markov假设，后面的信息的概率建立在前面信息的基础上，在神经网络结构上表现为后面的神经网络的隐藏层的输入是前面的神经网络的隐藏层的输出；
+* recursive: 空间维度的展开，是一个树结构，比如nlp里某句话，用recurrent neural network来建模的话就是假设句子后面的词的信息和前面的词有关，而用recurxive neural network来建模的话，就是假设句子是一个树状结构，由几个部分(主语，谓语，宾语）组成，而每个部分又可以在分成几个小部分，即某一部分的信息由它的子树的信息组合而来，整句话的信息由组成这句话的几个部分组合而来。
+
+只是recurrent是时间递归（常用），而recursive是指结构递归神经网络
+
+## LSTM
+LSTM算法全称为Long short-term memory，最早由 Sepp Hochreiter和Jürgen Schmidhuber于1997年提出.是一种特别的 RNN，比标准的 RNN 在很多的任务上都表现得更好。
+
+LSTMs 的 cell 的时间通道有两条。
+LSTM 的关键就是细胞状态，水平线在图上方贯穿运行。
+* 上方的时间通道（h(old)→h(new)）仅包含了两个代数运算,这意味着它信息传递的方式会更为直接h(new)=h(old)∗r1+r2
+* 位于下方的时间通道（s(old)→s(new)）则运用了大量的层结构,在 LSTMs 中，我们通常称这些层结构为门（Gates）
+
+> ϕ1是sigmoid函数，ϕ2是tanh函数
+> *表示 element wise 乘法(就是点乘)，使用X表示矩阵乘法
+一个经典的cell结构如下图
+![LSTM结构](/img/in-post/RNN_LSTM.png)
 
 参考资料
 [RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
