@@ -71,5 +71,5 @@ LSTM 的关键就是细胞状态，水平线在图上方贯穿运行。
 ![LSTM结构](/img/in-post/RNN_LSTM.png)
 
 参考资料
-[RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
-[RNN](https://www.jianshu.com/p/9dc9f41f0b29)
+<br>[RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
+<br>[理解LSTM网络(译)](https://www.jianshu.com/p/9dc9f41f0b29)

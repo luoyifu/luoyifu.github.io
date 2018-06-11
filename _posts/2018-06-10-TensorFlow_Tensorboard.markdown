@@ -13,6 +13,8 @@ tags:
 # TensroBoard使用指南
 
 TensorBoard 来展现你的 TensorFlow 图像，绘制图像生成的定量指标图以及附加数据。*TensorBoard 通过读取 TensorFlow 的事件文件来运行*。TensorFlow 的事件文件包括了你会在 TensorFlow 运行中涉及到的主要数据。
+使用TensorBoard的第一步是从TensorFlow运行中获取数据，为此，需要`summary ops`。`summary ops`也是operation, 和`tf.matmul`（乘）等operation是一样的，需要输入tensor，输出tensor，在graph中运行。
+* `summary ops`输出的tensors会写入文件并传送给tensorboard。如果需要可视化这些结果，需要evaluate `summary op`，取回结果，使用`tf.SummaryWriter`写入文件。
 
 ## 1 Tensorboard的数据形式
 
@@ -44,6 +46,7 @@ Tensorboard可以记录与展示以下数据形式：
 
 ## 3. 示例
 使用`summary_writer`
+`SummaryWriter` 的构造函数中包含了参数 `logdir`。这个 `logdir` 非常重要，所有事件都会写到它所指的目录下。此外，`SummaryWriter` 中还包含了一个可选择的参数 `GraphDef`。如果输入了该参数，那么 TensorBoard 也会显示你的图像。
 ```
 summary_writer = tf.train.SummaryWriter('/tmp/mnist_logs', sess.graph)
 ```
@@ -70,7 +73,9 @@ y_ = tf.placeholder("float", [None, 10], name='y_in')
 
 
 ```
-# 使用with tf.name_scope('inputs')可以将xs和ys包含进来，形成一个大的图层，图层的名字就是with tf.name_scope()方法里的参数。
+# 使用with tf.name_scope('inputs')可以将xs和ys包含进来，形成一个大的图层
+# 图层的名字就是with tf.name_scope()方法里的参数。
+
 with tf.name_scope('inputs'):
   x = tf.placeholder("float", [None, 784], name='x_in')
   y_ = tf.placeholder("float", [None,10], name='y_in')
