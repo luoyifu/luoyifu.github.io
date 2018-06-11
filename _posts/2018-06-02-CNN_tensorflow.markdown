@@ -12,6 +12,8 @@ tags:
 ---
 # TensorFlow构建卷积神经网络
 
+> 本文主要介绍卷积神将网络的基本概念和核心思想，构建方法。以及如何使用tensorflow实现网络构建
+
 卷积神经网络（CNN）由输入层、卷积层、激活函数、池化层、全连接层组成，即INPUT-CONV-RELU-POOL-FC
 
 * 卷积层: 做特征的提取，输出对应得feature map
@@ -59,8 +61,6 @@ D2=K
 > 一般有:F=3 => zero pad with 1
 > F=5 => zero pad with 2
 > F=7=> zero pad with 3
-
-
 
 ## 3. 池化层（pooling layer）
 池化层：对输入的特征图进行压缩，一方面使特征图变小，简化网络计算复杂度；一方面进行特征压缩，提取主要特征。
@@ -114,34 +114,156 @@ D2=K
 
 * Session（）使用`with..as..`后可以不使用`close`关闭对话，而调用InteractiveSession需要在最后调用`close`
 
+
+## 5. 几个重要的函数解析
 TensorFlow在卷积和池化上有很强的灵活性。我们怎么处理边界？步长应该设多大？在这个实例里，我们会一直使用vanilla版本。我们的卷积使用1步长（stride size），0边距（padding size）的模板，保证输出和输入是同一个大小。我们的池化用简单传统的2x2大小的模板做max pooling。为了代码更简洁，我们把这部分抽象成一个函数。
 ```
 def conv2d(x, W):
   return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 def max_pool_2x2(x):
-  return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1], padding='SAME')
+  return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],strides=[1, 2, 2, 1], padding='SAME')
 ```
 
+### 卷积实现函数tf.nn.conv2d
+`tf.nn.conv2d(input, filter, strides, padding, use_cudnn_on_gpu=None, name=None)`是很重要的一个函数。
 
-卷积层定义函数：
+除去name参数用以指定该操作的name，与方法有关的一共五个参数：
+* 第一个参数input：指需要做卷积的输入图像，它要求是一个Tensor，具有[batch, in_height, in_width, in_channels]这样的shape，具体含义是[训练时一个batch的图片数量, 图片高度, 图片宽度, 图像通道数]，注意这是一个4维的Tensor，要求类型为float32和float64其中之一
+* 第二个参数filter：相当于CNN中的卷积核，它要求是一个Tensor，具有[filter_height, filter_width, in_channels, out_channels]这样的shape，具体含义是[卷积核的高度，卷积核的宽度，图像通道数，卷积核个数]，要求类型与参数input相同，有一个地方需要注意，第三维in_channels，就是参数input的第四维
+* 第三个参数strides：卷积时在图像每一维的步长，这是一个一维的向量，长度4
+* 第四个参数padding：string类型的量，只能是"SAME","VALID"其中之一，这个值决定了不同的卷积方式（后面会介绍）
+* 第五个参数：use_cudnn_on_gpu:bool类型，是否使用cudnn加速，默认为true
+
+结果返回一个Tensor，这个输出，就是我们常说的feature map，shape仍然是[batch, height, width, channels]这种形式。
+### 实现池化的函数tf.nn.max_pool
+`tf.nn.max_pool(value, ksize, strides, padding, name=None)`
+
+参数是四个，和卷积很类似：
+* 第一个参数value：需要池化的输入，一般池化层接在卷积层后面，所以输入通常是feature map，依然是[batch, height, width, channels]这样的shape
+* 第二个参数ksize：池化窗口的大小，取一个四维向量，一般是[1, height, width, 1]，因为我们不想在batch和channels上做池化，所以这两个维度设为了1
+* 第三个参数strides：和卷积类似，窗口在每一个维度上滑动的步长，一般也是[1, stride,stride, 1]
+* 第四个参数padding：和卷积类似，可以取'VALID' 或者'SAME'
+
+返回一个Tensor，类型不变，shape仍然是[batch, height, width, channels]这种形式
+
+### relu
+`tf.nn.relu(features, name = None)`
+
+解释：这个函数的作用是计算激活函数relu，即max(features, 0)。即将矩阵中每行的非最大值置0。
+
+## tensorflow代码实现：
+构建cnn网络，处理mnist数据集。数据下载参考[mnist_input_data](https://luoyifu.github.io/luoyifu.github.io/2018/06/02/TensorFlow_Mnist/)
 ```
+import tensorflow as tf
+import numpy as np
+import input_data 
+
+# 导入mnist数据集
+mnist = input_data.read_data_sets('data/', one_hot=True)
+
+# 输入数据层
+with tf.name_scope('Input'):
+    x = tf.placeholder("float", shape=[None, 784],name='x_input')
+    y_ = tf.placeholder("float", shape=[None, 10],name='y_input')
+
+# 初始化偏置项
+def weight_variable(shape):
+  # 这是一个截断的产生正太分布的函数，就是说产生正太分布的值如果与均值的差值大于两倍的标准差，那就重新生成。
+  # 和一般的正太分布的产生随机数据比起来，这个函数产生的随机数与均值的差距不会超过两倍的标准差，但是一般的别的函数是可能的。
+  initial = tf.truncated_normal(shape, stddev=0.1,name='weight')
+  return tf.Variable(initial)
+
+def bias_variable(shape):
+  initial = tf.constant(0.1, shape=shape,name='bias')
+  return tf.Variable(initial)
+
 def conv2d(x, W):
   # tf.nn.conv2d(input, filter, strides, padding, use_cudnn_on_gpu=None, data_format=None, name=None)
+  # W 是权重也是过滤器/内核张量
   return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
+
+def max_pool_2x2(x):
+  return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+
+
+# 构建第一层卷积
+# 把x_image和权值向量进行卷积，加上偏置项，然后应用ReLU激活函数，最后进行max pooling。
+with tf.name_scope('First_Layer'):
+    W_conv1 = weight_variable([5, 5, 1, 32])
+    b_conv1 = bias_variable([32])
+    # 把x变成一个4d向量，其第2、第3维对应图片的宽、高，最后一维代表图片的颜色通道数
+    # (因为是灰度图所以这里的通道数为1，如果是rgb彩色图，则为3)
+    x_image = tf.reshape(x, [-1,28,28,1])
+    h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
+    h_pool1 = max_pool_2x2(h_conv1)
+
+
+with tf.name_scope('Second_Layer'):
+    W_conv2 = weight_variable([5, 5, 32, 64])
+    b_conv2 = bias_variable([64])
+    # 构建第二层卷积
+    # 为了构建一个更深的网络，我们会把几个类似的层堆叠起来。第二层中，每个5x5的patch会得到64个特征。
+    h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
+    h_pool2 = max_pool_2x2(h_conv2)
+
+
+with tf.name_scope('Full_acess'):
+    # 现在，图片尺寸减小到7x7，我们加入一个有1024个神经元的全连接层，用于处理整个图片。
+    # 我们把池化层输出的张量reshape成一些向量，乘上权重矩阵，加上偏置，然后对其使用ReLU。
+    W_fc1 = weight_variable([7 * 7 * 64, 1024])
+    b_fc1 = bias_variable([1024])
+
+    # 我们通过tf.reshape()将h_pool2的输出值从一个三维的变为一维的数据, -1表示先不考虑输入图片例子维度, 将上一个输出结果展平.
+    h_pool2_flat = tf.reshape(h_pool2, [-1, 7*7*64])
+    h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+
+# 为了减少过拟合，我们在输出层之前加入dropout
+# 用一个placeholder来代表一个神经元的输出在dropout中保持不变的概率。
+# 这样我们可以在训练过程中启用dropout，在测试过程中关闭dropout。 
+# TensorFlow的tf.nn.dropout操作除了可以屏蔽神经元的输出外，还会自动处理神经元输出值的scale。
+# 所以用dropout的时候可以不用考虑scale。
+with tf.name_scope('Drop_OUt'):
+    keep_prob = tf.placeholder("float")
+    h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+
+# 最后，我们添加一个softmax层，就像前面的单层softmax regression一样
+# 输出层
+with tf.name_scope('Output'):
+    W_fc2 = weight_variable([1024, 10])
+    b_fc2 = bias_variable([10])
+    y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+
+
+# 训练和评估
+cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
+
+train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+
+with tf.name_scope('Evaluate'):
+    correct_prediction = tf.equal(tf.arg_max(y_conv,1),tf.arg_max(y_,1))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction,'float'))
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+
+    # 输出summary，以便可视化
+    summary_writer = tf.summary.FileWriter("cnn-logs/", sess.graph)
+
+    for i in range(500):
+        batch = mnist.train.next_batch(50)
+        if i%100 == 0:
+            train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
+            print ("step %d, training accuracy %g"%(i, train_accuracy))
+        train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+    
+    print ("test accuracy %g"%accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 ```
-
-
-给定一个input的张量[batch, in_height, in_width, in_channels]和一个过滤器 / 内核张量 [filter_height, filter_width, in_channels, out_channels]后，执行以下操作：
-
-> 1. 展平filter为一个形状为[filter_height * filter_width * in_channels, output_channels]的二维矩阵。
-> 2. 从input中按照filter大小提取图片子集形成一个大小为[batch, out_height, out_width, filter_height * filter_width * in_channels]的虚拟张量。
-> 3. 循环每个图片子集，右乘filter矩阵。
-
-
+使用tensorboard，看到整个cnn的网络结构如图：
+![cnn网络结构图](/img/in-post/cnn_tensorflow.png)
 
 参考资料：
 <br>[非常棒的卷积神经网络的基础知识，动图让理论更生动](https://blog.csdn.net/qq_31456593/article/details/76083091)
 <br>[卷积和池化](https://www.cnblogs.com/believe-in-me/p/6645402.html)
 <br>[tf.nn.conv2d函数理解](https://www.cnblogs.com/qggg/p/6832342.html)
+<br>[cnn网络图解](https://blog.csdn.net/u012871279/article/details/78037984)
