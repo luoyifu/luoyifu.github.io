@@ -91,6 +91,7 @@ output_size
 ```
 比如我们通常是将一个batch送入模型计算，**设输入数据的形状为`(batch_size, input_size)`，那么计算时得到的隐层状态就是`(batch_size, state_size)`，输出就是`(batch_size, output_size)`。**
 > state_size对应上图中h
+
 ```
 import tensorflow as tf
 import numpy as np
@@ -108,6 +109,11 @@ print(h1.shape) # (32, 128)
 对于`batch_size`和`num_step`参数不理解的可以参见下图：
 ![参数解析](/img/in-post/rnn_data.jpg)
 > 下图中每一行为一个batch，可以看到这里的batch_size = 3,每一列为一个num_step,下图中的num_steps为3
+
+下图中，假如我们目前手里有一个序列1-12，在LSTM中，`batch_size`意味着每次向网络输入多少个样本。当我们设置`batch_size=2`时，我们会将整个序列划分为6个batch，每个batch中有两个数字。我们可以看到整个RNN网络由三个相同的神经网络单元叠加起来的序列。那么在这里就有了第二个概念`sequence_length`（也即`num_step`），中文叫序列长度。上图中序列长度是3，可以看到将三个字符作为了一个序列。
+![参数解析](/img/in-post/rnn03.jpg)
+
+我们定义一个batch中的序列个数为N（即`batch_size`），定义单个序列长度为M（也就是我们的`num_steps`）。那么实际上我们每个batch是一个N*M的数组，相当于我们的每个batch中有N*M个字符。在上图中，当我们设置N=2， M=3时，我们可以得到每个batch的大小为2 x 3 = 6个字符，整个序列可以被分割成12 / 6 = 2个batch。
 
 对于`BasicLSTMCell`，情况有些许不同，因为LSTM可以看做有两个隐状态h和c，对应的隐层就是一个Tuple，每个都是`(batch_size, state_size)`的形状：
 ```
@@ -170,3 +176,4 @@ print(h1) # tuple中含有3个32x128的向量
 <br>[RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
 <br>[理解LSTM网络(译)](https://www.jianshu.com/p/9dc9f41f0b29)
 <br>[TensorFlow中RNN的正确打开方式](https://blog.csdn.net/starzhou/article/details/77848156)
+<br>[安娜卡列尼娜文本生成——RNN&TensorFlow](https://zhuanlan.zhihu.com/p/27087310)
