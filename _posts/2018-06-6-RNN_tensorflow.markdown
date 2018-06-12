@@ -70,6 +70,103 @@ LSTM 的关键就是细胞状态，水平线在图上方贯穿运行。
 一个经典的cell结构如下图
 ![LSTM结构](/img/in-post/RNN_LSTM.png)
 
+## TensorFlow代码实现
+
+### 1. RNNCell构建
+RNNCell是TensorFlow中实现RNN的基本单元，每个RNNCell都有一个`call`方法，使用方式是：`(output, next_state) = call(input, state)`
+<br>**RNNCell的Call方法的基本功能：**每调用一次RNNCell的`call`方法，就相当于在时间上“推进了一步”，如下图所示：
+假设我们有一个初始状态h0，还有输入x1，调用`call(x1, h0)`后就可以得到`(output1, h1`)：
+![first step](/img/in-post/rnn01.jpg)
+再调用一次`call(x2, h1)`就可以得到`(output2, h2)`：
+![second step](/img/in-post/rnn02.jpg)
+
+RNNCell只是一个抽象类，我们用的时候都是用的它的两个子类`BasicRNNCell`和`BasicLSTMCell`。顾名思义，前者是RNN的基础类，后者是LSTM的基础类
+
+对于RNNCell，还有两个类属性比较重要：
+```
+# 隐藏层大小
+state_size
+# 输出大小
+output_size
+```
+比如我们通常是将一个batch送入模型计算，**设输入数据的形状为`(batch_size, input_size)`，那么计算时得到的隐层状态就是`(batch_size, state_size)`，输出就是`(batch_size, output_size)`。**
+> state_size对应上图中h
+```
+import tensorflow as tf
+import numpy as np
+
+cell = tf.nn.rnn_cell.BasicRNNCell(num_units=128) # state_size = 128
+print(cell.state_size) # 128
+
+inputs = tf.placeholder(np.float32, shape=(32, 100)) # 32 是 batch_size
+h0 = cell.zero_state(32, np.float32) # 通过zero_state得到一个全0的初始状态，形状为(batch_size, state_size)
+
+output, h1 = cell.call(inputs, h0) #调用call函数
+
+print(h1.shape) # (32, 128)
+```
+对于`batch_size`和`num_step`参数不理解的可以参见下图：
+![参数解析](/img/in-post/rnn_data.jpg)
+> 下图中每一行为一个batch，可以看到这里的batch_size = 3,每一列为一个num_step,下图中的num_steps为3
+
+对于`BasicLSTMCell`，情况有些许不同，因为LSTM可以看做有两个隐状态h和c，对应的隐层就是一个Tuple，每个都是`(batch_size, state_size)`的形状：
+```
+import tensorflow as tf
+import numpy as np
+
+lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=128)
+
+inputs = tf.placeholder(np.float32, shape=(32, 100)) # 32 是 batch_size
+h0 = lstm_cell.zero_state(32, np.float32) # 通过zero_state得到一个全0的初始状态
+output, h1 = lstm_cell.call(inputs, h0)
+
+print(h1.h)  # shape=(32, 128)
+print(h1.c)  # shape=(32, 128)
+```
+
+### 2. 一次执行多步学习tf.nn.dynamic_rnn
+RNNCell的`call`方法只是在序列时间上前进了一步。比如使用x1、h0得到h1，通过x2、h1得到h2等。这样的h话，如果我们的序列长度为10，就要调用10次call函数，比较麻烦。对此，TensorFlow提供了一个tf.nn.dynamic_rnn函数，使用该函数就相当于调用了n次call函数。即通过{h0,x1, x2, …., xn}直接得{h1,h2…,hn}。
+
+具体来说，设我们输入数据的格式为`(batch_size, time_steps, input_size)`，其中`time_steps`表示序列本身的长度，如在Char RNN中，长度为10的句子对应的`time_steps`就等于10。最后的`input_size`就表示输入数据单个序列单个时间维度上固有的长度。另外我们已经定义好了一个RNNCell，调用该RNNCell的`call`函数`time_steps`次，对应的代码就是：
+```
+# inputs: shape = (batch_size, time_steps, input_size)
+# cell: RNNCell
+# initial_state: shape = (batch_size, cell.state_size)。初始状态。一般可以取零矩阵
+
+outputs, state = tf.nn.dynamic_rnn(cell, inputs, initial_state=initial_state)
+```
+此时，得到的outputs就是time_steps步里所有的输出。它的形状为`(batch_size, time_steps, cell.output_size)`。state是最后一步的隐状态，它的形状为`(batch_size, cell.state_size)`。
+
+### 3. 多层RNN
+将x输入第一层RNN的后得到隐层状态h，这个隐层状态就相当于第二层RNN的输入，第二层RNN的隐层状态又相当于第三层RNN的输入，以此类推。在TensorFlow中，可以使用`tf.nn.rnn_cell.MultiRNNCell`函数对RNNCell进行堆叠
+```
+import tensorflow as tf
+import numpy as np
+
+# 每调用一次这个函数就返回一个BasicRNNCell
+def get_a_cell():
+   return tf.nn.rnn_cell.BasicRNNCell(num_units=128)
+
+# 用tf.nn.rnn_cell MultiRNNCell创建3层RNN
+cell = tf.nn.rnn_cell.MultiRNNCell([get_a_cell() for _ in range(3)]) # 3层RNN
+
+# 得到的cell实际也是RNNCell的子类
+# 它的state_size是(128, 128, 128)
+# (128, 128, 128)并不是128x128x128的意思
+# 而是表示共有3个隐层状态，每个隐层状态的大小为128
+
+print(cell.state_size) # (128, 128, 128)
+
+# 使用对应的call函数
+inputs = tf.placeholder(np.float32, shape=(32, 100)) # 32 是 batch_size
+h0 = cell.zero_state(32, np.float32) # 通过zero_state得到一个全0的初始状态
+output, h1 = cell.call(inputs, h0)
+
+print(h1) # tuple中含有3个32x128的向量
+```
+
 参考资料
+<br>[完全图解RNN](https://zhuanlan.zhihu.com/p/28054589)
 <br>[RNN基础知识](http://lawlite.me/2017/06/14/RNN-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%92%8CLSTM-01%E5%9F%BA%E7%A1%80/)
 <br>[理解LSTM网络(译)](https://www.jianshu.com/p/9dc9f41f0b29)
+<br>[TensorFlow中RNN的正确打开方式](https://blog.csdn.net/starzhou/article/details/77848156)
