@@ -120,7 +120,7 @@ biases = tf.Variable(tf.zeros([200]), name="biases")
 # 添加一个操作来初始化所有变量
 init_op = tf.initialize_all_variables()
 
-# 加下来，在部署模型的时候：
+# 接下来，在部署模型的时候：
 with tf.Session() as sess:
   # Run the init operation.
   sess.run(init_op)
@@ -163,6 +163,8 @@ w2 = tf.Variable(weights.initialized_value(), name="w2")
 # 创建另一个变量，值是weights的2倍
 w_twice = tf.Variable(weights.initialized_value() * 0.2, name="w_twice")
 ```
+
+另外，**如果想把Variable的值重置为初始值，就再run一次init操作。**
 
 #### 保存和恢复
 用`tf.train.Saver()`创建一个Saver来管理模型中的所有变量。
@@ -278,6 +280,14 @@ normal loading在session中不管做多少次x+y，只需要执行z定义的加�
 
 ## 二、Session会话控制
 Session 是 Tensorflow 为了控制,和输出文件的执行的语句. 运行`session.run()`可以获得你要得知的运算结果, 或者是你所要运算的部分.
+
+我们在编写代码的时候，总是要先定义好整个图，然后才调用sess.run()。注意，**调用sess.run()的时候，tensorflow并没有计算整个图，只是计算了与想要fetch 的值相关的部分**
+
+`Session.run`方法有2个参数，分别是`fetches`和`feed_dict`。参数名有时候可以省略，比如`sess.run(fetches=product)`和`sess.run(product)`是一样的。传递给`fetches`参数的既可以是Tensor也可以是Operation。如果传给`fetches`的是一个list，run返回的结果也是一个与之对应的list.
+
+**sess.run() 中的feed_dict:**
+`feed_dict`的作用是给使用`placeholder`创建出来的tensor赋值。
+> 其实，他的作用更加广泛：feed 使用一个值临时替换一个 op 的输出结果. 你可以提供 feed 数据作为 run() 调用的参数. feed 只在调用它的方法内有效, 方法结束, feed 就会消失.
 
 加载 Tensorflow ，然后建立两个`matrix`,输出两个`matrix`矩阵相乘的结果。
 ```
