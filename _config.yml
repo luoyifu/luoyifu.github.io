@@ -9,6 +9,7 @@ url: "http://luoyifu.github.io"              # your host, for absolute URL
 baseurl: "/luoyifu.github.io"         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
+# 图标设置：http://fontawesome.dashgame.com/
 
 # SNS settings
 RSS: false
