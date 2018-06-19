@@ -413,4 +413,5 @@ plt.show()
 
 构建2层cnn网络，代码见[CNN的tensorflow实现](https://luoyifu.github.io/luoyifu.github.io/2018/06/02/CNN_tensorflow/)，模型结构如图（使用tensorboard显示）。模型训练结果（参数参考代码部分，训练结果：0.9362，0.9453，0.9502）
 ![无降噪自动编码器](/img/in-post/tensorboard_cnn.png)
-加入降噪自动编码器后，模型训练结果为0.9088，0.9129
+加入降噪自动编码器后，模型训练结果为0.9088，0.9129。
+自动编码器的加入，并没有改善训练结果，反而导致训练结果变差了一些。

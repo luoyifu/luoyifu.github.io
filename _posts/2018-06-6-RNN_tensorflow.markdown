@@ -177,3 +177,4 @@ print(h1) # tuple中含有3个32x128的向量
 <br>[理解LSTM网络(译)](https://www.jianshu.com/p/9dc9f41f0b29)
 <br>[TensorFlow中RNN的正确打开方式](https://blog.csdn.net/starzhou/article/details/77848156)
 <br>[安娜卡列尼娜文本生成——RNN&TensorFlow](https://zhuanlan.zhihu.com/p/27087310)
+<br>[RNN实现自写诗歌、小说](https://github.com/hzy46/Char-RNN-TensorFlow)
