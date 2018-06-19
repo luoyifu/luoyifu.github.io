@@ -44,6 +44,21 @@ with tf.Session() as sess:
     saver.restore(sess,'model/model.ckpt')
     print(sess.run(v1+v2))
 ```
+这种方法加载模型时和保存模型时的代码基本上是一致的，唯一不同的就是没有变量的初始化过程。模型加载的时候，如果某个变量没有被加载，则系统将会报错。
+
+也可以用定义好的其他变量来替换模型保存时的变量名：(这里用x,y替换v1,v2)
+```
+v1 = tf.Variable(tf.constant(1,shape = [1]),name='v1')
+v2 = tf.Variable(tf.constant(2,shape = [1]),name='v2')
+result = v1 + v2
+# 通过字典将变量重命名
+saver = tf.train.Saver(
+    {'x':v1,'y':v2})
+with tf.Session() as sess:
+   saver.restore(sess,'model/model.ckpt')
+   out = tf.get_default_graph().get_tensor_by_name('add:0')
+   print(sess.run(out))
+```
 
 #### 不包含所有运算
 ```
@@ -69,9 +84,35 @@ with tf.Session() as sess:
     saver.save(sess,'model/model.ckpt')
 ```
 
+如果保存好一个模型，想要在另一个模型中应用之前用到的模型。例如，构建CNN网络时，需要用到之前训练好的降噪自动编码器。
 
+如果新模型中，想要给自动编码器赋予一个名称，使用`tf.name_scope()`函数，那么程序会报错。解决方法是，训练之前那个模型的时候，使用通用的`tf.name_scope()`函数先一步给之前的模型赋予一个名称。例如：
+```
+with tf.name_scope('AutoEncoder'):
+    autoencoder=AuEn.AdditiveGaussianNoiseAutoencoder(
+        n_input=784,n_hidden=200,transfer_function=tf.nn.softplus,
+        optimizer=tf.train.AdamOptimizer(learning_rate=0.001),scale=0.01)
+
+saver = tf.train.Saver()
+with tf.Session() as sess:
+    模型训练……
+    saver.save(autoencoder.sess,'model/mnist_au_model.ckpt')
+
+---
+# 直接读取模型参数
+# 将saver也放到tf.name_scope()函数里，在tensorboard显示时会更容易看
+with tf.name_scope('AutoEncoder'):
+  autoencoder=AuEn.AdditiveGaussianNoiseAutoencoder(
+    n_input=784,n_hidden=200,transfer_function=tf.nn.softplus,
+    optimizer=tf.train.AdamOptimizer(learning_rate=0.001),scale=0.01)
+
+  saver = tf.train.Saver()
+  saver.restore(autoencoder.sess,'model/mnist_au_model.ckpt')
+
+```
 
 ## DropOut
 
 参考资料
-[tensorflow模型保存和恢复](https://blog.csdn.net/lovelyaiq/article/details/78646401)
+<br>[tensorflow模型保存和恢复](https://blog.csdn.net/lovelyaiq/article/details/78646401)
+<br>[保存和恢复模型](https://www.jianshu.com/p/c5da70ea8e41)

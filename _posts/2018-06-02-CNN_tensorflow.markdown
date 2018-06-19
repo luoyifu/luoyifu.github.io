@@ -261,6 +261,9 @@ with tf.Session() as sess:
 ```
 使用tensorboard，看到整个cnn的网络结构如图：
 ![cnn网络结构图](/img/in-post/cnn_tensorflow.png)
+这个模型计算识别Mnist数据库的手写字体，在上述代码所确定的参数情况下运行后，识别准确率结果为
+
+## 探索加入自动编码器
 
 参考资料：
 <br>[非常棒的卷积神经网络的基础知识，动图让理论更生动](https://blog.csdn.net/qq_31456593/article/details/76083091)
