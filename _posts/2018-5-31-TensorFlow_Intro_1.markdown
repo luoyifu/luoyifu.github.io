@@ -298,7 +298,7 @@ import tensorflow as tf
 matrix1 = tf.constant([[3,3]])
 matrix2 = tf.constant([[2],
                        [2]])
-product = tf.matmul(matrix1,matrix2) # matmul是矩阵惩罚
+product = tf.matmul(matrix1,matrix2) # matmul是矩阵乘法
 ```
 
 因为`product`不是直接计算的步骤, 所以我们会要使用`Session`来激活`product`并得到计算结果. 有两种形式使用会话控制`Session`。

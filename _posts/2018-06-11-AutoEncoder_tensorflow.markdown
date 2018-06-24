@@ -403,15 +403,3 @@ for i in range(examples_to_show):
     a[1][i].imshow(np.reshape(au[i], (28, 28)))  
 plt.show() 
 ```
-
-## 5. 在模型中加入自动编码器
-在tensorflow入门训练中，我们选择了mnist数据进行手写数字识别。基础的模型是一个输入层，一个Softmax层，然后就是输出层。
-模型构建如图
-在输入数据后，加入一层降噪自动编码器后，模型如图：
-![有降噪自动编码器](/img/in-post/basic_mnist.png)
-然后，经过5次实验，加入降噪编码器后，训练准确率为（0.8803,0.8562,0.8738,0.8955,0.8831），与没加入降噪编码器的结果(0.9168)相比，还略有不入。
-
-构建2层cnn网络，代码见[CNN的tensorflow实现](https://luoyifu.github.io/luoyifu.github.io/2018/06/02/CNN_tensorflow/)，模型结构如图（使用tensorboard显示）。模型训练结果（参数参考代码部分，训练结果：0.9362，0.9453，0.9502）
-![无降噪自动编码器](/img/in-post/tensorboard_cnn.png)
-加入降噪自动编码器后，模型训练结果为0.9088，0.9129。
-自动编码器的加入，并没有改善训练结果，反而导致训练结果变差了一些。
