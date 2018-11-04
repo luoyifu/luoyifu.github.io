@@ -67,6 +67,7 @@ EMR_ldamodel = models.ldamodel.LdaModel(corpus_tfidf, num_topics=50, id2word=dic
 # 这行代码可以将新的文档转化为LDA主题分布
 doc_topic = [a for a in EMR_ldamodel[corpus]]
 '''
+结果输出如下：
 '''
 # 这是一个输出示例，即编号118的病历是由5，17，41号主题构成的，且每个主题所占比重为0.19，0.06，0.65
 >>doc_topic[118]
