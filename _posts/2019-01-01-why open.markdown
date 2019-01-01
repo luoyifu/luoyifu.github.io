@@ -4,7 +4,7 @@ title:      "我为什么开放朋友圈和公开博客"
 subtitle:   "2019年的第一篇体会"
 date:       2019-01-01 22:00:00
 author:     "Luo Yifu"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/post-bg-sky.jpg"
 tags:
     - 生活
     - 感悟
